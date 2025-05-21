@@ -32,7 +32,11 @@ function generateRoomCode() {
 }
 
 io.on("connection", (socket) => {
-  const clientIp = socket.handshake.address.replace("::ffff:", "");
+  const forwarded = socket.handshake.headers['x-forwarded-for'];
+  const clientIp = forwarded
+  ? forwarded.split(',')[0].trim().replace("::ffff:", "")
+  : socket.handshake.address.replace("::ffff:", "");
+
   console.log(`Client connected: ${clientIp}`);
   dns.reverse(socket.handshake.address, (err, hostnames) => {
     const hostname = err ? clientIp : hostnames[0];
