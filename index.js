@@ -62,14 +62,12 @@ io.on("connection", (socket) => {
   // Enviar lista de salas disponibles al cliente que se conecta
   const availableRooms = [];
   rooms.forEach((roomData, roomCode) => {
-    if (roomData.users.size < roomData.maxUsers) {
       availableRooms.push({
         code: roomCode,
         name: roomData.name,
         userCount: roomData.users.size,
         maxUsers: roomData.maxUsers,
       });
-    }
   });
   socket.emit("available_rooms", availableRooms);
 
@@ -224,14 +222,12 @@ io.on("connection", (socket) => {
   socket.on("get_rooms", () => {
     const availableRooms = [];
     rooms.forEach((roomData, roomCode) => {
-      if (roomData.users.size < roomData.maxUsers) {
         availableRooms.push({
           code: roomCode,
           name: roomData.name,
           userCount: roomData.users.size,
           maxUsers: roomData.maxUsers,
         });
-      }
     });
     socket.emit("available_rooms", availableRooms);
   });
