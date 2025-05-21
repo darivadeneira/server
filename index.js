@@ -41,6 +41,16 @@ function roomNameExists(roomName) {
   return false;
 }
 
+// Función para verificar si un username ya está en uso en una sala
+function isUsernameTaken(room, username) {
+  for (const user of room.users.values()) {
+    if (user.username === username) {
+      return true;
+    }
+  }
+  return false;
+}
+
 io.on("connection", (socket) => {
   const forwarded = socket.handshake.headers['x-forwarded-for'];
   const clientIp = forwarded
@@ -118,6 +128,12 @@ io.on("connection", (socket) => {
     }
 
     const room = rooms.get(roomCode);
+
+    // Verificar si el username ya está en uso en la sala
+    if (isUsernameTaken(room, username)) {
+      socket.emit("join_room_error", { message: "Ese nombre de usuario ya está en uso en la sala." });
+      return;
+    }
 
     // Comprobar si la sala está llena
     if (room.users.size >= room.maxUsers) {
