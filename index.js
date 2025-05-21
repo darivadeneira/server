@@ -122,12 +122,17 @@ io.on("connection", (socket) => {
     // Unir el socket a la sala
     socket.join(roomCode);
 
+    
+    
     // Notificar a la sala que un nuevo usuario se ha unido
     io.to(roomCode).emit("user_joined", {
       user: { username, id: socket.id },
       userCount: room.users.size,
       roomCode: room.code,
     });
+
+    
+    io.emit("room_list_updated");
 
     // Enviar historial de mensajes de la sala al usuario
     socket.emit("room_history", {
