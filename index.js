@@ -126,6 +126,7 @@ io.on("connection", (socket) => {
     io.to(roomCode).emit("user_joined", {
       user: { username, id: socket.id },
       userCount: room.users.size,
+      roomCode: room.code,
     });
 
     // Enviar historial de mensajes de la sala al usuario
@@ -188,6 +189,7 @@ io.on("connection", (socket) => {
         userId: socket.id,
         username: socket.data.username,
         userCount: room.users.size,
+        roomCode: room.code
       });
 
       console.log(
@@ -199,6 +201,8 @@ io.on("connection", (socket) => {
         rooms.delete(roomCode);
         io.emit("room_list_updated");
         console.log(`Room ${roomCode} has been removed as it's empty.`);
+      } else {
+        io.emit("room_list_updated");
       }
 
       // Quitar al socket de la sala
