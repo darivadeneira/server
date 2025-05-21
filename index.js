@@ -31,6 +31,16 @@ function generateRoomCode() {
   return crypto.randomBytes(3).toString("hex").toUpperCase();
 }
 
+// Función para verificar si ya existe una sala con el mismo nombre
+function roomNameExists(roomName) {
+  for (const roomData of rooms.values()) {
+    if (roomData.name === roomName) {
+      return true;
+    }
+  }
+  return false;
+}
+
 io.on("connection", (socket) => {
   const forwarded = socket.handshake.headers['x-forwarded-for'];
   const clientIp = forwarded
@@ -73,6 +83,12 @@ io.on("connection", (socket) => {
 
   // Crear una nueva sala
   socket.on("create_room", ({ roomName, maxUsers }) => {
+    // Verificar si ya existe una sala con el mismo nombre
+    if (roomNameExists(roomName)) {
+      socket.emit("create_room_error", { message: "Ya existe una sala con ese nombre." });
+      return;
+    }
+
     const roomCode = generateRoomCode();
 
     // Crear la sala con la estructura necesaria
